@@ -5,14 +5,22 @@ class Tricemus:
     ALPHABET = ['а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т',
                 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я']
 
-    def __init__(self, keyword, alphabet=None):
+    def __init__(self, keyword=None, alphabet=None):
         if alphabet:
             self.alphabet = alphabet
         else:
             self.alphabet = Tricemus.ALPHABET
-
-        self.keyword = keyword
+        if keyword:
+            self.keyword = keyword
+        else:
+            self.keyword = ''
         self.table = [i for i in self.keyword]
+
+    def change_key(self, keyword):
+        self.keyword = keyword
+        self.table = [s for s in self.keyword]
+        self.make_table()
+
 
     def get_under(self, letter):
         if letter in self.table[0]:
@@ -73,8 +81,8 @@ class Tricemus:
 
 
 if __name__ == '__main__':
-    t = Tricemus('бандероль')
-    # t.make_table()
+    t = Tricemus()
+    t.change_key('бандероль')
     # print(t.table)
     # enc = t.encrypt('вылетаем пятого')
     # print(enc)
@@ -82,5 +90,7 @@ if __name__ == '__main__':
     # print(dec)
     # print(enc == 'Пекзъвзчшлъйсй'.lower())
     # t.save_table('banderol')
-    t.load_table('banderol')
+    #t.load_table('banderol')
+
+    print(t.keyword)
     print(t.encrypt('вылетаем пятого'))
