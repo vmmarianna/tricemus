@@ -5,6 +5,7 @@ from tricemus import Tricemus
 from gui import Ui_MainWindow  # Это наш конвертированный файл дизайна
 from utils import write, read
 
+
 class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def __init__(self):
@@ -44,6 +45,7 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
         load_path = self.ui.open_file_lineEdit.text()
         read_load_path = read(load_path)
         self.text = read_load_path
+        print(self.text)
         print('load_text_pushButton')
 
     def save_text(self):
@@ -60,6 +62,22 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.open_file_lineEdit.setText(fname)
 
     def save_file(self):
+        fname, _ = QFileDialog.getSaveFileName(self,
+                                               'Save file',
+                                               '',
+                                               'All files (*.*)',
+                                               options=QFileDialog.DontUseNativeDialog)
+        self.ui.save_to_lineEdit.setText(fname)
+
+    def open_key(self):
+        fname, _ = QFileDialog.getOpenFileName(self,
+                                               'Open file',
+                                               '',
+                                               'All files (*.*)',
+                                               options=QFileDialog.DontUseNativeDialog)
+        self.ui.open_file_lineEdit.setText(fname)
+
+    def save_key(self):
         fname, _ = QFileDialog.getSaveFileName(self,
                                                'Save file',
                                                '',

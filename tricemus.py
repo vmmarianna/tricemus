@@ -1,5 +1,5 @@
 import pickle
-
+import string
 
 class Tricemus:
     ALPHABET = ['а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т',
@@ -21,7 +21,6 @@ class Tricemus:
         self.table = [s for s in self.keyword]
         self.make_table()
 
-
     def get_under(self, letter):
         if letter in self.table[0]:
             return self.table[1][self.table[0].index(letter)]
@@ -42,10 +41,19 @@ class Tricemus:
         if letter in self.table[3]:
             return self.table[2][self.table[3].index(letter)]
 
+    @staticmethod
+    def clear_text(text):
+        cleared_text = ''
+        for i in text.lower():
+            if i.isalpha():
+                cleared_text += i
+
+        return cleared_text
+
     def encrypt(self, text):
         encrypted_text = ''
-
-        for each in text.replace(' ', ''):
+        text = self.clear_text(text)
+        for each in text:
             encrypted_text += self.get_under(each)
 
         return encrypted_text
@@ -90,7 +98,7 @@ if __name__ == '__main__':
     # print(dec)
     # print(enc == 'Пекзъвзчшлъйсй'.lower())
     # t.save_table('banderol')
-    #t.load_table('banderol')
+    # t.load_table('banderol')
 
     print(t.keyword)
     print(t.encrypt('вылетаем пятого'))
