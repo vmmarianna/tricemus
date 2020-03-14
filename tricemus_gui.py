@@ -1,8 +1,10 @@
 import sys  # sys нужен для передачи argv в QApplication
+
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from tricemus import Tricemus
+
 from gui import Ui_MainWindow  # Это наш конвертированный файл дизайна
+from tricemus import Tricemus
 from utils import write, read
 
 
@@ -14,76 +16,91 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.open_file_pushButton.clicked.connect(self.open_file)
-        self.ui.save_to_pushButton.clicked.connect(self.save_file)
-        self.ui.load_text_pushButton.clicked.connect(self.load_text)
-        self.ui.save_text_pushButton.clicked.connect(self.save_text)
-        self.ui.encrypt_pushButton.clicked.connect(self.encrypt)
-        self.ui.decrypt_pushButton.clicked.connect(self.decrypt)
+        self.ui.button_encrypt.clicked.connect(self.encrypt)
+        self.ui.button_decrypt.clicked.connect(self.decrypt)
+        self.ui.Button_open_encrypt.clicked.connect(lambda: self.open_file("ENC"))
+        self.ui.button_save_encrypt.clicked.connect(lambda: self.save_file("ENC"))
+        self.ui.button_open_decrypt.clicked.connect(lambda: self.open_file("DEC"))
+        self.ui.button_save_decrypt.clicked.connect(lambda: self.save_file("DEC"))
+        self.ui.button_open_key.clicked.connect(self.open_key)
+        self.ui.button_save_key.clicked.connect(self.save_key)
+
         self.tricemus = Tricemus()
-        self.crypted_text = None
+        self.encrypted_text = None
         self.text = None
         self.decrypted_text = None
 
     def encrypt(self):
-        self.crypted_text = None
-        keyword = self.ui.keyword_lineEdit.text()
+        self.encrypted_text = None
+        self.decrypted_text = None
+        self.text = read(self.ui.line_openfile_encrypt.text())
+        keyword = self.ui.line_key.text()
         self.tricemus.change_key(keyword=keyword)
-        crypted_text = self.tricemus.encrypt(self.text)
-        self.crypted_text = crypted_text
+        encrypted_text = self.tricemus.encrypt(self.text)
+        self.encrypted_text = encrypted_text
+        write(self.ui.line_savefile_encrypt.text(), encrypted_text)
 
     def decrypt(self):
-        self.text = None
-        keyword = self.ui.keyword_lineEdit.text()
+        self.decrypted_text = None
+        text = read(self.ui.line_openfile_decrypt.text())
+        keyword = self.ui.line_key.text()
         self.tricemus.change_key(keyword=keyword)
-        text = self.tricemus.decrypt(self.crypted_text)
-        self.text = text
+        decrypt_text = self.tricemus.decrypt(text)
+        self.decrypted_text = decrypt_text
+        write(self.ui.line_savefile_decrypt.text(), decrypt_text)
 
-        print('decrypt_pushButton')
-
-    def load_text(self):
-        load_path = self.ui.open_file_lineEdit.text()
-        read_load_path = read(load_path)
-        self.text = read_load_path
-        print(self.text)
-        print('load_text_pushButton')
-
-    def save_text(self):
-        save_path = self.ui.save_to_lineEdit.text()
-        write(save_path, self.crypted_text)
-        print('save_to_pushButton')
-
-    def open_file(self):
+    def open_file(self, mode):
         fname, _ = QFileDialog.getOpenFileName(self,
                                                'Open file',
                                                '',
                                                'All files (*.*)',
                                                options=QFileDialog.DontUseNativeDialog)
-        self.ui.open_file_lineEdit.setText(fname)
+        if mode == "ENC":
+            self.ui.line_openfile_encrypt.setText(fname)
+        if mode == "DEC":
+            self.ui.line_openfile_decrypt.setText(fname)
 
-    def save_file(self):
+    def save_file(self, mode):
         fname, _ = QFileDialog.getSaveFileName(self,
                                                'Save file',
                                                '',
                                                'All files (*.*)',
                                                options=QFileDialog.DontUseNativeDialog)
-        self.ui.save_to_lineEdit.setText(fname)
+        if mode == "ENC":
+            self.ui.line_savefile_encrypt.setText(fname)
+        if mode == "DEC":
+            self.ui.line_savefile_decrypt.setText(fname)
 
     def open_key(self):
         fname, _ = QFileDialog.getOpenFileName(self,
                                                'Open file',
                                                '',
-                                               'All files (*.*)',
+                                               'Tricemus Key files (*.keytr)',
                                                options=QFileDialog.DontUseNativeDialog)
-        self.ui.open_file_lineEdit.setText(fname)
+        if fname == '':
+            return
+        if fname.endswith(".keytr"):
+            pass
+        else:
+            fname += ".keytr"
+        key = read(fname)
+        self.ui.line_key.setText(key)
 
     def save_key(self):
         fname, _ = QFileDialog.getSaveFileName(self,
                                                'Save file',
                                                '',
-                                               'All files (*.*)',
+                                               'Tricemus Key files (*.keytr)',
                                                options=QFileDialog.DontUseNativeDialog)
-        self.ui.save_to_lineEdit.setText(fname)
+
+        if fname == '':
+            return
+        if fname.endswith(".keytr"):
+            pass
+        else:
+            fname += ".keytr"
+        key = self.ui.line_key.text()
+        write(fname, key)
 
 
 def main():

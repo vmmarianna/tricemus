@@ -1,5 +1,5 @@
 import pickle
-import string
+
 
 class Tricemus:
     ALPHABET = ['а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т',
@@ -78,6 +78,7 @@ class Tricemus:
             self.table[16:24],
             self.table[24:],
         ]
+        print(self.table)
 
     def save_table(self, filename):
         with open(f'{filename}.tric', 'wb') as f:
